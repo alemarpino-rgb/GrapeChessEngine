@@ -1,7 +1,7 @@
 # GrapeChessEngine
 
 **A small UCI chess engine written in Python**, built step by step on top of [python-chess](https://python-chess.readthedocs.io/).
-Made by [Alessandro Marpino](https://github.com/alemarpino-rgb). License: MIT.
+Made by [Alessandro Marpino](https://github.com/alemarpino-rgb). License: MIT. It uses pypy and python-chess (check the licencies in [the folder](https://github.com/alemarpino-rgb/GrapeChessEngine/tree/main/licenses)).
 
 ## English summary
 
@@ -21,7 +21,7 @@ Feedback, bug reports and test games are very welcome!
 
 ## Cos'è
 
-GrapeChessEngine è un motore scacchistico in Python. È la continuazione di [klak](https://github.com/Spunc595/Klak/tree/main/alessandro), un motore sempre scritto da me: la storia delle versioni prima della 0.7.0 è lì. Tutte le versioni del motore sono nella cartella [Tutte_le_versioni](https://github.com/alemarpino-rgb/GrapeChessEngine/tree/main/Tutte_le_versioni).
+GrapeChessEngine è un motore scacchistico in Python. È la continuazione di [klak](https://github.com/Spunc595/Klak/tree/main/alessandro), un motore sempre scritto da me: la storia delle versioni prima della 0.7.0 è lì. Tutte le versioni del motore sono nella cartella [Tutte_le_versioni](https://github.com/alemarpino-rgb/GrapeChessEngine/tree/main/Tutte_le_versioni). Usa python-chess e pypy (vedi le licnze [nella cartella](https://github.com/alemarpino-rgb/GrapeChessEngine/tree/main/licenses))
 
 ## Come funziona
 
