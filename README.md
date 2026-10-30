@@ -1,4 +1,4 @@
-# klak
+# GrapeChessEngine
 
 Un motore scacchistico scritto in Python, costruito un passo alla volta sopra [python-chess](https://python-chess.readthedocs.io/)
 Fatto da [Alessandro Marpino](https://github.com/alemarpino-rgb).
@@ -30,7 +30,7 @@ pypy3 -m pip install chess
 ## Uso
 
 ```bash
-pypy klak.py
+pypy Grape_v070.py
 ```
 
 Il programma chiede la profondità di ricerca e fa giocare klak contro sé stesso, stampando la scacchiera a ogni mossa e il PGN della partita alla fine. Per ogni mossa mostra anche nodi esaminati, tempo e nodi al secondo.
