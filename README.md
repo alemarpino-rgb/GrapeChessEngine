@@ -1,7 +1,7 @@
 # GrapeChessEngine
 
 Un motore scacchistico scritto in Python, costruito un passo alla volta sopra [python-chess](https://python-chess.readthedocs.io/)
-Fatto da [Alessandro Marpino](https://github.com/alemarpino-rgb). E' una diramazione dal motore [klak](https://github.com/Spunc595/Klak/tree/main/alessandro) sempre scritto da me. Per vedere la vera storia del motre prima della versione 0.7.0 andate la.
+Fatto da [Alessandro Marpino](https://github.com/alemarpino-rgb). E' una diramazione dal motore [klak](https://github.com/Spunc595/Klak/tree/main/alessandro) sempre scritto da me. Per vedere la vera storia del motre prima della versione 0.7.0 andate la. Per vedere tutte le versioni, clicca [qui](https://github.com/alemarpino-rgb/GrapeChessEngine/tree/main/Tutte_le_versioni)
 
 ## Come funziona
 
