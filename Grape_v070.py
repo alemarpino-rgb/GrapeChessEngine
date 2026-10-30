@@ -224,7 +224,6 @@ def negamax(board, profondita, alfa, beta):
             return beta
         if punteggio > alfa:
             alfa, migliore = punteggio, mossa
-        alfa = max(alfa, punteggio)
 
     tipo = ESATTO if alfa > alfa_iniziale else LIMITE_ALTO
     TT[chiave] = (profondita, alfa, tipo, migliore)
@@ -248,7 +247,7 @@ def cerca_iterativa(board, secondi = None, prof_max = 64, stampa = False):
     if not mosse:
         return info
     if len(mosse) == 1: # mossa obbligata: inutile pensare
-        info["mosse"]=mosse[0]
+        info["mossa"]=mosse[0]
         return info 
     random.shuffle(mosse) # si da veriabilità alle mosse
     mosse = ordina(b, mosse)

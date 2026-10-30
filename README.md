@@ -1,62 +1,116 @@
 # GrapeChessEngine
 
-Un motore scacchistico scritto in Python, costruito un passo alla volta sopra [python-chess](https://python-chess.readthedocs.io/)
-Fatto da [Alessandro Marpino](https://github.com/alemarpino-rgb). E' una diramazione dal motore [klak](https://github.com/Spunc595/Klak/tree/main/alessandro) sempre scritto da me. Per vedere la vera storia del motre prima della versione 0.7.0 andate la. Per vedere tutte le versioni, clicca [qui](https://github.com/alemarpino-rgb/GrapeChessEngine/tree/main/Tutte_le_versioni)
+**A small UCI chess engine written in Python**, built step by step on top of [python-chess](https://python-chess.readthedocs.io/).
+Made by [Alessandro Marpino](https://github.com/alemarpino-rgb). License: MIT.
+
+## English summary
+
+- **Search:** negamax with alpha-beta, quiescence search, iterative deepening with time management, transposition table, MVV-LVA move ordering (TT move first), cheap draw detection.
+- **Evaluation:** material + piece-square tables (precomputed, read from bitboards), separate middlegame/endgame king tables.
+- **Speed:** around 100k nodes/s with PyPy.
+- **Protocol:** UCI, works in Arena, Cute Chess and other GUIs.
+- **Play it on Lichess:** [GrapeChessEngine](https://lichess.org/@/GrapeChessEngine) (around 1450–1500 in bot blitz).
+
+**Windows:** download the zip from the [Releases](https://github.com/alemarpino-rgb/GrapeChessEngine/releases), unzip it and load `GrapeChessEngine.exe` as a UCI engine in your GUI. Python is not needed: a portable PyPy is included.
+
+**From source:** install [PyPy](https://pypy.org/) and python-chess (`pypy3 -m pip install chess`), then run `pypy uci.py`.
+
+Feedback, bug reports and test games are very welcome!
+
+---
+
+## Cos'è
+
+GrapeChessEngine è un motore scacchistico in Python. È la continuazione di [klak](https://github.com/Spunc595/Klak/tree/main/alessandro), un motore sempre scritto da me: la storia delle versioni prima della 0.7.0 è lì. Tutte le versioni del motore sono nella cartella [Tutte_le_versioni](https://github.com/alemarpino-rgb/GrapeChessEngine/tree/main/Tutte_le_versioni).
 
 ## Come funziona
 
 **Ricerca**
 - **Negamax con potatura alfa-beta**: esplora l'albero delle mosse e scarta i rami che l'avversario non permetterebbe mai.
-- **Ricerca di quiescenza**: alla fine della ricerca principale continua a esaminare le catture, per non fermarsi a metà di uno scambio (effetto orizzonte).
-- **Ordinamento delle mosse (MVV-LVA)**: prova prima promozioni e catture, con la vittima più preziosa presa dall'attaccante meno prezioso. Più tagli alfa-beta, molti meno nodi.
+- **Approfondimento iterativo con limite di tempo**: cerca a profondità 1, 2, 3… finché non scade il tempo della mossa, poi gioca la migliore mossa dell'ultima profondità completata. Si ferma subito se trova un matto o se la mossa è obbligata.
+- **Tabella di trasposizione**: ricorda le posizioni già analizzate (profondità, punteggio, tipo di punteggio e mossa migliore). Le posizioni ritrovate non si ricalcolano, e la mossa migliore salvata viene provata per prima.
+- **Ricerca di quiescenza**: alla fine della ricerca principale continua a esaminare le catture, per non fermarsi a metà di uno scambio.
+- **Ordinamento delle mosse**: prima la mossa della tabella di trasposizione, poi promozioni e catture (MVV-LVA: la vittima più preziosa presa dall'attaccante meno prezioso).
 - **Controlli di patta economici**: matto e stallo ricavati dalla stessa lista di mosse; ripetizioni, regola delle 50 mosse e materiale insufficiente controllati solo quando possono essere veri.
-- **Varietà**: tra mosse con lo stesso punteggio ne sceglie una a caso, così non gioca sempre la stessa partita.
+- **Varietà**: tra mosse con lo stesso punteggio ne sceglie una a caso.
 
 **Valutazione**
 - Materiale: P=100, C=300, A=320, T=500, D=900.
-- **Piece-square tables**: un bonus o malus per ogni pezzo in base alla casa che occupa (centro, sviluppo, pedoni avanzati…).
-- **Re in due fasi**: nel mediogioco preferisce stare al riparo dietro l'arrocco, nel finale va al centro.
+- **Piece-square tables**: un bonus o malus per ogni pezzo in base alla casa che occupa.
+- **Tabelle precalcolate e bitboard**: valore del pezzo e bonus della casa sono già sommati all'avvio, e durante la ricerca i pezzi si leggono direttamente dai bitboard.
+- **Re in due fasi**: nel mediogioco preferisce stare al riparo, nel finale va al centro.
 
-## Requisiti
+## Uso
 
-- Python 3 (consigliato **[PyPy](https://pypy.org/)**, molto più veloce per questo tipo di codice)
-- python-chess
+### Versione per Windows (consigliata)
+
+1. Scarica lo zip dalle [Release](https://github.com/alemarpino-rgb/GrapeChessEngine/releases) e scompattalo.
+2. Nella tua interfaccia (Arena, Cute Chess, …) aggiungi un nuovo motore, scegli `GrapeChessEngine.exe` e il protocollo **UCI**.
+
+Non serve installare niente: nella cartella c'è già una copia portatile di PyPy con python-chess.
+
+```
+GrapeChessEngine/
+  GrapeChessEngine.exe   avvia il motore
+  uci.py                 interfaccia UCI
+  Grape_v070.py          il motore
+  pypy/                  PyPy portatile
+```
+
+### Dal codice sorgente
+
+Serve Python 3 (consigliato **[PyPy](https://pypy.org/)**, molto più veloce per questo tipo di codice) e python-chess:
 
 ```bash
 pypy3 -m ensurepip
 pypy3 -m pip install chess
 ```
 
-## Uso
-
-```bash
-pypy Grape_v070.py
-```
-
-Il programma chiede la profondità di ricerca e fa giocare klak contro sé stesso, stampando la scacchiera a ogni mossa e il PGN della partita alla fine. Per ogni mossa mostra anche nodi esaminati, tempo e nodi al secondo.
-
-Per giocarci contro c'è la funzione `gioca(board, prof, colore_motore)`: le mosse si inseriscono in notazione SAN (`e4`, `Nf3`, `O-O`…).
-
-Profondità consigliate:
-- **4**: risposte quasi immediate
-- **5**: gioco più forte, da pochi decimi a qualche decina di secondi a mossa nel mediogioco
+- **Come motore UCI:** `pypy uci.py`. In Cute Chess puoi usare come comando `pypy` e come argomento `uci.py`.
+- **Per giocarci contro nel terminale:** `pypy Grape_v070.py`. Il programma chiede il tempo totale in secondi per il motore, che gioca col nero; le tue mosse si scrivono in notazione SAN (`e4`, `Nf3`, `O-O`…).
 
 ## Prestazioni
 
 Con PyPy su un PC desktop, circa **100.000 nodi/s**.
 
-In un primo test contro Stockfish limitato a 1320 Elo (0,1 s a mossa), klak a profondità 3 e senza ordinamento delle mosse ha fatto **9 punti su 10**. Le versioni attuali cercano più in profondità a parità di tempo.
+| Novità | Risultato |
+|---|---|
+| Valutazione precalcolata + bitboard | stessa ricerca **1,6 volte più veloce** |
+| Approfondimento iterativo | tempo per mossa sotto controllo (massimo 2,04 s su un limite di 2 s) |
+| Tabella di trasposizione | profondità media in 3 s sulle posizioni di prova **da 4,67 a 5,83**; nei finali di pedoni da 8 a 12 |
 
-## L'autore
+Su Lichess gioca come [GrapeChessEngine](https://lichess.org/@/GrapeChessEngine), intorno a **1450–1500** nel blitz tra bot.
 
-L'autore di questo motore è Alessandro Marpino (io ;) ). Ho anche fatto altri progetti come [GrapeScript](https://github.com/alemarpino-rgb/GrapeScript), un intero linguaggio di programmazione! 
+**Punti deboli noti:** la valutazione non sa ancora niente di struttura pedonale, sicurezza del re e pedoni passati. Inoltre, appena si cambiano le donne, il motore si crede in finale e porta il re al centro anche con le torri ancora sulla scacchiera.
+
+## Novità
+
+**0.7.0**
+- Tabella di trasposizione
+- Interfaccia UCI ed eseguibile per Windows
+
+**0.6.0** (come klak)
+- Approfondimento iterativo con limite di tempo e gestione del tempo
+
+**0.5.0** (come klak)
+- Valutazione con tabelle precalcolate e bitboard
 
 ## Prossimi passi
 
-- [ ] Valutazione più veloce con tabelle precalcolate e bitboard
-- [ ] Tabella di trasposizione
-- [ ] Approfondimento iterativo con limite di tempo
+- [x] Valutazione più veloce con tabelle precalcolate e bitboard
+- [x] Approfondimento iterativo con limite di tempo
+- [x] Tabella di trasposizione
+- [x] Interfaccia UCI ed eseguibile per Windows
+- [ ] Correggere il riconoscimento del finale (re al centro troppo presto)
 - [ ] Killer moves
 - [ ] Valutazione più ricca: struttura pedonale, sicurezza del re, pedoni passati
 - [ ] Test automatici, benchmark e suite tattica
-- [ ] Match regolari contro Stockfish per misurare l'Elo
+- [ ] Match regolari contro altri motori per misurare l'Elo
+
+## L'autore
+
+L'autore di questo motore è Alessandro Marpino (io ;) ). Ho anche fatto altri progetti come [GrapeScript](https://github.com/alemarpino-rgb/GrapeScript), un intero linguaggio di programmazione!
+
+## Licenza
+
+[MIT](LICENSE)

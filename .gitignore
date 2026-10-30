@@ -1,0 +1,7 @@
+pypy/
+*.exe
+build/
+dist/
+*.spec
+__pycache__/
+bench.csv
