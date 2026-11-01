@@ -12,9 +12,9 @@ import threading
 
 import chess
 
-import Grape_v070 as motore   # Il motore
+import Grape_v080 as motore   # Il motore
 
-NOME = "GrapeChessEngine 0.7.0"
+NOME = "GrapeChessEngine 0.8.0"
 AUTORE = "Alessandro Marpino"
 MARGINE = 0.05     # secondi tenuti da parte per la comunicazione con la GUI
 

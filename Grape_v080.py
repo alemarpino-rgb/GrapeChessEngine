@@ -296,14 +296,16 @@ def pezzo_catturato(board, mossa):
                             chess.square_rank(mossa.from_square))
         return board.piece_at(casa)
     return board.piece_at(mossa.to_square)
+FASE_MAX = 24
 
-def is_finale(board):
+def fase_gioco(board):
+    # 24 = tutti i pezzi (mediogioco), 0 = solo re e pedoni (finale)
     pc = chess.popcount
-    pezzi = pc(board.knights) * 300 + pc(board.bishops) * 320 + pc(board.rooks) * 500
-    return board.queens == 0 or pezzi <= 1300
+    fase = pc(board.knights) + pc(board.bishops) + 2 * pc(board.rooks) + 4 * pc(board.queens)
+    return min(fase, FASE_MAX)   # con le promozioni potrebbe superare 24
 
 def valuta_posizione(board, colore):
-    fase = "finale" if is_finale(board) else "medio"
+    fase = fase_gioco(board)
     totale = 0
     # c = chess.WHITE
     for c in (chess.WHITE, chess.BLACK):
@@ -317,9 +319,12 @@ def valuta_posizione(board, colore):
             tab = PST[c][tipo]
             for casa in chess.scan_forward(bb & miei):
                 s += tab[casa]
-        s += RE_PST[fase, c][board.king(c)]
-        # se si è bianchi, aggiunge, sennò toglie
-        totale += s if c == colore else -s
+        re = board.king(c)
+        medio = RE_PST["medio", c][re]
+        finale = RE_PST["finale", c][re]
+        s += (medio * fase + finale * (FASE_MAX - fase)) // FASE_MAX
+
+        totale += s if c == colore else -s # se si è bianchi si aggiunge, sennò si toglie
     return totale
 
 def materiale(board, colore):
